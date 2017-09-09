@@ -1,15 +1,26 @@
 <template>
   <div>
 
-    <h4>{{ board.name }}</h4>
+    <h4>Board: {{ board.name }}</h4>
 
     <div v-if="(board.lists && !board.lists.length)">Board is empty</div>
+
     <v-container grid-list-md text-xs-center>
       <v-layout row wrap>
 
         <v-flex xs3 v-for="list in board.lists" :key="list.id">
-          <v-card dark class="indigo lighten-1">
-              <v-card-text class="px-0">{{ list.name }}</v-card-text>
+          <v-card>
+            <v-toolbar class="cyan" dark>
+              <v-toolbar-title>{{ list.name }}</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-toolbar-side-icon></v-toolbar-side-icon>
+            </v-toolbar>
+
+            <card-list :list="list"></card-list>
+
+            <v-card-actions>
+              <v-btn flat class="orange--text">Add ...</v-btn>
+            </v-card-actions>
           </v-card>
         </v-flex>
 
@@ -21,56 +32,38 @@
 
 
 <script>
+import cardList from './CardList'
+import boardDataMixin from '../mixins/boardDataMixin'
+
 export default {
 
   data () {
     return {
+      boards: [],
+      lookupBoards: [],
       board: {
-        title: 'loading...',
-        name: ''
+        name: 'loading...'
       }
     }
   },
 
-  mounted () {
-    if (!token) {
-      this.$router.push('/login')
-    }
+  components: { cardList },
 
-    // pull the lists for this board from the backend
-    var boardId = this.$router.history.current.params.id // this.$router.params.id
-    if (!parseInt(boardId)) {
-      return
-    }
-    axios.get('boards/' + boardId + '?api_token=' + token)
-      .then(response => {
-        if (response.data) {
-          this.board = response.data.data
-        }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          if (error.response.data.message) {
-            swal('Backend Error:', JSON.stringify(error.response.data.message).replace(/{|}|\[|\]/g, '\n'), 'error')
-          } else {
-            swal('Backend Error:', JSON.stringify(error.response).replace(/{|}|\[|\]/g, '\n'), 'error')
-          }
-          console.log(error.response.data)
-          console.log(error.response.status)
-          console.log(error.response.headers)
-        } else if (error.request) {
-          console.log(error.request)
-        } else {
-          console.log('Error', error.message)
-        }
-        console.log(error.config)
-      })
-  },
+  mixins: [boardDataMixin],
+
   created () {
-    console.log('SingleBoard created')
+    this.fetchBoardsData()
   },
-  updated () {
-    console.log('SingleBoard updated')
+
+  watch: {
+    'boards' () {
+      var boardId = this.$router.history.current.params.id
+      this.board = this.lookupBoards[boardId]
+    },
+    '$route' () {
+      var boardId = this.$router.history.current.params.id
+      this.board = this.lookupBoards[boardId]
+    }
   }
 }
 </script>
