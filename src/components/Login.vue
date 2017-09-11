@@ -9,6 +9,7 @@
               v-model="login.email"
               label="Email"
               required
+              @keyup.enter="logItIn"
             >
             </v-text-field>
 
@@ -17,6 +18,7 @@
               label="Password"
               type="password"
               required
+              @keyup.enter="logItIn"
             >
             </v-text-field>
           </v-card-text>
@@ -48,6 +50,7 @@
 
         .then(response => {
           token = response.data.user.api_token
+          window.token = token
           localStorage.setItem('token', token)
           localStorage.setItem('user', JSON.stringify(response.data.user))
           Event.$emit('login')

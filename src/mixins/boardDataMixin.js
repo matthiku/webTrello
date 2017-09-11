@@ -3,7 +3,7 @@ export default {
     fetchBoardsData () {
       if (!token) { return this.$router.push('/login') }
 
-      console.log('getting all boards from backend', this.boards.length)
+      // console.log('getting all boards from backend', this.boards.length)
 
       axios.get('boards?api_token=' + token)
         .then(response => {
@@ -11,7 +11,7 @@ export default {
             this.manageBoards(response.data.data)
             return
           }
-          console.log(response)
+          // console.log(response)
           return
         })
 
@@ -43,6 +43,7 @@ export default {
             this.lookupBoards[this.boards[i].id] = this.boards[i]
         }
         localStorage.setItem('lookupBoards', JSON.stringify(this.lookupBoards))
+        Event.$emit('BoardsUpdated')
         return
       }
       this.boards = JSON.parse(localStorage.getItem('boards'))
@@ -50,19 +51,22 @@ export default {
       return
     },
 
-    sendNewBoard (name) {
-      if (!name) return
-      console.log('creating new board', name)
-      console.log('# of boards', this.boards.length)
+    sendNewItem (type, name) {
+      if (!type || !name) return
+
+      console.log('creating new', type, 'Name: ', name)
+      // console.log('# of boards', this.boards.length)
 
       axios.post('/boards?api_token=' + token, {name: name})
         .then(response => {
           if (response.data.data.id) {
             var board = response.data.data
             this.manageBoards()
+            console.log('trying to show Board with id', board.id)
             this.$router.push({name: 'SingleBoard', params: {id: board.id}})
             return
           }
+          console.log('something went wrong!', response)
           return
         })
 
@@ -92,6 +96,8 @@ export default {
         .then(response => {
           if (response.data.data.id) {
             this.lookupBoards[id]['name'] = response.data.data.name
+            Event.$emit('BoardsUpdated')
+            // TODO update this.boards!!!
           }
         })
 
@@ -133,7 +139,7 @@ export default {
             console.log('boards:', vm.boards)
             return
           }
-          console.log('board deleted???')
+          console.log('board deleted???', response)
           return
         })
 

@@ -3,7 +3,7 @@
 
     <h4>Board: {{ board.name }}</h4>
 
-    <div v-if="(board.lists && !board.lists.length)">Board is empty</div>
+    <div v-if="(board.lists && !board.lists.length)">Board is empty, add new card</div>
 
     <v-container grid-list-md text-xs-center>
       <v-layout row wrap>
@@ -52,7 +52,7 @@ export default {
   mixins: [boardDataMixin],
 
   created () {
-    console.log('singleBoard created, fetching data')
+    // console.log('singleBoard created, fetching data')
     this.fetchBoardsData()
   },
 
@@ -65,7 +65,7 @@ export default {
     },
     '$route' () {
       var boardId = this.$router.history.current.params.id
-      console.log('singleBoard ROUTE changed, update data', this.$router)
+      // console.log('singleBoard ROUTE changed, update data', this.$router)
       if (this.lookupBoards[boardId]) {
         this.board = this.lookupBoards[boardId]
       }

@@ -24,7 +24,7 @@
                   <v-btn fab small dark class="indigo" slot="activator">
                     <v-icon dark>add</v-icon>
                   </v-btn>
-                  <create-new-board></create-new-board>
+                  <create-new-board type="Board"></create-new-board>
                 </v-menu>
               </v-card-actions>
             </v-card-text>
@@ -40,7 +40,7 @@
 
 <script>
 import boardDataMixin from '../mixins/boardDataMixin'
-import createNewBoard from './CreateNewBoard'
+import createNewBoard from './CreateNewItem'
 import ShowBoardItem from './ShowBoardItem'
 
 export default {
@@ -60,25 +60,19 @@ export default {
 
   methods: {
     addNewBoard () {
-      this.sendNewBoard()
+      this.sendNewItem('Board')
     }
   },
 
-  updated () {
-    console.log('Boards.vue updated.')
-  },
-
   mounted () {
-    console.log('Boards.vue mounted. getting all boards from backend', this.boards)
     this.fetchBoardsData()
 
     Event.$on('DeleteBoard', (id) => {
-      console.log('boards deleting', this.lookupBoards[id])
       this.sendDeleteBoard(id)
     })
 
-    Event.$on('newBoardCreated', (name) => {
-      this.sendNewBoard(name)
+    Event.$on('newItemCreated', (type, name) => {
+      this.sendNewItem(type, name)
     })
 
     Event.$on('boardNameChanged', (name, id) => {

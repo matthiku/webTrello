@@ -20,7 +20,7 @@
               v-model="newBoardMenu"
             >
             <v-btn class="grey" dark slot="activator">Create new board ...</v-btn>
-            <create-new-board></create-new-board>            
+            <create-new-board type="Board"></create-new-board>            
           </v-menu>
         </v-list-tile>
 
@@ -63,7 +63,7 @@
 
 
 <script>
-  import createNewBoard from './CreateNewBoard'
+  import createNewBoard from './CreateNewItem'
 
   export default {
 
@@ -82,31 +82,18 @@
 
     methods: {
       getBoards () {
-        console.log('toolbar: boards', this.boards.length)
         this.boards = JSON.parse(localStorage.getItem('boards'))
-        console.log('toolbar: boards', this.boards.length)
       }
     },
 
-    changed () {
+    changed: function () {
       this.getBoards()
     },
 
-    mounted () {
+    mounted: function () {
       this.getBoards()
 
-      Event.$on('DeleteBoard', (id) => {
-        console.log('getBoards.')
-        this.getBoards()
-      })
-
-      Event.$on('newBoardCreated', (name) => {
-        console.log('getBoards.')
-        this.getBoards()
-      })
-
-      Event.$on('boardNameChanged', (name, id) => {
-        console.log('getBoards.')
+      Event.$on('BoardsUpdated', () => {
         this.getBoards()
       })
     }
