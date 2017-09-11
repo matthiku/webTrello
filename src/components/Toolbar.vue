@@ -67,7 +67,7 @@
 
   export default {
 
-    props: ['boards', 'loggedIn', 'title', 'user'],
+    props: ['loggedIn', 'title', 'user'],
 
     components: {
       createNewBoard
@@ -75,8 +75,40 @@
 
     data () {
       return {
-        newBoardMenu: false
+        newBoardMenu: false,
+        boards: []
       }
+    },
+
+    methods: {
+      getBoards () {
+        console.log('toolbar: boards', this.boards.length)
+        this.boards = JSON.parse(localStorage.getItem('boards'))
+        console.log('toolbar: boards', this.boards.length)
+      }
+    },
+
+    changed () {
+      this.getBoards()
+    },
+
+    mounted () {
+      this.getBoards()
+
+      Event.$on('DeleteBoard', (id) => {
+        console.log('getBoards.')
+        this.getBoards()
+      })
+
+      Event.$on('newBoardCreated', (name) => {
+        console.log('getBoards.')
+        this.getBoards()
+      })
+
+      Event.$on('boardNameChanged', (name, id) => {
+        console.log('getBoards.')
+        this.getBoards()
+      })
     }
   }
 </script>

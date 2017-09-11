@@ -39,13 +39,6 @@
 
     mixins: [boardDataMixin],
 
-    methods: {
-      go (where) {
-        this.$router.push(where)
-        console.log(this.$router.params)
-      }
-    },
-
     created () {
       Event.$on('login', () => {
         this.loggedIn = true
@@ -56,16 +49,6 @@
         this.loggedIn = false
       })
 
-      Event.$on('newBoardCreated', (name) => {
-        this.sendNewBoard(name)
-      })
-
-      Event.$on('boardNameChanged', (name, id) => {
-        if (name && parseInt(id)) {
-          this.changeBoardName(name, id)
-        }
-      })
-
       let token = localStorage.getItem('token')
       if (token) {
         this.loggedIn = true
@@ -73,10 +56,13 @@
       } else {
         this.$router.push('/login')
       }
+      console.log('App.vue created.')
     },
 
     mounted () {
+      console.log('App.vue mounted.')
       if (this.boards !== '') {
+        console.log('App.vue: getting all boards from backend', this.boards)
         this.fetchBoardsData()
       }
     }

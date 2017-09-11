@@ -1,16 +1,18 @@
 export default {
   methods: {
     fetchBoardsData () {
-      if (!token) {
-        return this.$router.push('/login')
-      }
+      if (!token) { return this.$router.push('/login') }
+
+      console.log('getting all boards from backend', this.boards.length)
 
       axios.get('boards?api_token=' + token)
         .then(response => {
           if (response.data) {
-            this.boards = response.data.data
-            this.createIndexedBoards()
+            this.manageBoards(response.data.data)
+            return
           }
+          console.log(response)
+          return
         })
 
         .catch(function (error) {
@@ -33,23 +35,35 @@ export default {
       return
     },
 
-    createIndexedBoards () {
-      for (var i = 0, len = this.boards.length; i < len; i++) {
-          this.lookupBoards[this.boards[i].id] = this.boards[i]
+    manageBoards (boards) {
+      if (boards) {
+        this.boards = boards
+        localStorage.setItem('boards', JSON.stringify(this.boards))
+        for (var i = 0, len = this.boards.length; i < len; i++) {
+            this.lookupBoards[this.boards[i].id] = this.boards[i]
+        }
+        localStorage.setItem('lookupBoards', JSON.stringify(this.lookupBoards))
+        return
       }
+      this.boards = JSON.parse(localStorage.getItem('boards'))
+      this.lookupBoards = JSON.parse(localStorage.getItem('lookupBoards'))
       return
     },
 
     sendNewBoard (name) {
       if (!name) return
+      console.log('creating new board', name)
+      console.log('# of boards', this.boards.length)
+
       axios.post('/boards?api_token=' + token, {name: name})
         .then(response => {
           if (response.data.data.id) {
             var board = response.data.data
-            this.boards.push(board)
-            this.createIndexedBoards()
-            this.$router.push('/boards/' + board.id)
+            this.manageBoards()
+            this.$router.push({name: 'SingleBoard', params: {id: board.id}})
+            return
           }
+          return
         })
 
         .catch(function (error) {
@@ -65,7 +79,7 @@ export default {
           } else if (error.request) {
             console.log(error.request)
           } else {
-            console.log('Error', error.message)
+            console.log('Backend Error!', error)
           }
           console.log(error.config)
         })
@@ -103,11 +117,23 @@ export default {
 
     sendDeleteBoard (id) {
       if (!parseInt(id)) return
+      let vm = this
+      console.log('boards:', vm.boards)
+      console.log('deleting', id)
+
       axios.delete('/boards/' + id + '/?api_token=' + token)
         .then(response => {
+          console.log('vm:', vm)
           if (response.data.data.id) {
-            this.fetchBoardsData()
+            console.log('board deleted, renewing data now:')
+            vm.fetchBoardsData()
+            console.log('data renewed, back to Boards:')
+            vm.$router.push({name: 'Boards'})
+            console.log('after re-routing')
+            console.log('boards:', vm.boards)
+            return
           }
+          console.log('board deleted???')
           return
         })
 

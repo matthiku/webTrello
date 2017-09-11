@@ -1,5 +1,5 @@
 <template>
-  <v-card dark class="primary pa-0 elevation-9">
+  <v-card dark class=" pa-0 elevation-9" :class="deleting ? 'secondary' : 'primary'">
     <v-container fluid grid-list-xl>
       <v-layout row justify-space-between class="pa-0">
 
@@ -24,7 +24,7 @@
           <v-btn fab small @click="nameChanged">OK</v-btn>
         </v-flex>
 
-        <v-flex v-show="!editing" xs2 text-xs-right class="pa-0">
+        <v-flex v-show="!editing && !deleting" xs2 text-xs-right class="pa-0">
           <v-speed-dial top right direction="left">
             <v-btn slot="activator" class="blue darken-2" small dark fab hover>
               <v-icon>account_circle</v-icon>
@@ -55,6 +55,7 @@
     data () {
       return {
         editing: false,
+        deleting: false,
         newName: ''
       }
     },
@@ -64,6 +65,11 @@
     },
 
     methods: {
+      deleteBoard (id) {
+        this.deleting = true
+        this.board.name = 'deleting board ...'
+        Event.$emit('DeleteBoard', id)
+      },
       showNameEditor () {
         this.editing = true
       },

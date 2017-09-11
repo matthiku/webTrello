@@ -52,17 +52,23 @@ export default {
   mixins: [boardDataMixin],
 
   created () {
+    console.log('singleBoard created, fetching data')
     this.fetchBoardsData()
   },
 
   watch: {
     'boards' () {
       var boardId = this.$router.history.current.params.id
-      this.board = this.lookupBoards[boardId]
+      if (this.lookupBoards[boardId]) {
+        this.board = this.lookupBoards[boardId]
+      }
     },
     '$route' () {
       var boardId = this.$router.history.current.params.id
-      this.board = this.lookupBoards[boardId]
+      console.log('singleBoard ROUTE changed, update data', this.$router)
+      if (this.lookupBoards[boardId]) {
+        this.board = this.lookupBoards[boardId]
+      }
     }
   }
 }

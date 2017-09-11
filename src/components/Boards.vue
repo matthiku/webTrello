@@ -59,16 +59,33 @@ export default {
   },
 
   methods: {
-    deleteBoard (id) {
-      this.sendDeleteBoard(id)
-    },
     addNewBoard () {
       this.sendNewBoard()
     }
   },
 
+  updated () {
+    console.log('Boards.vue updated.')
+  },
+
   mounted () {
+    console.log('Boards.vue mounted. getting all boards from backend', this.boards)
     this.fetchBoardsData()
+
+    Event.$on('DeleteBoard', (id) => {
+      console.log('boards deleting', this.lookupBoards[id])
+      this.sendDeleteBoard(id)
+    })
+
+    Event.$on('newBoardCreated', (name) => {
+      this.sendNewBoard(name)
+    })
+
+    Event.$on('boardNameChanged', (name, id) => {
+      if (name && parseInt(id)) {
+        this.changeBoardName(name, id)
+      }
+    })
   }
 
 }
