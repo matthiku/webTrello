@@ -51,43 +51,76 @@ export default {
       return
     },
 
-    sendNewItem (type, name) {
+    sendNewItem (type, name, item) {
       if (!type || !name) return
 
       console.log('creating new', type, 'Name: ', name)
       // console.log('# of boards', this.boards.length)
 
-      axios.post('/boards?api_token=' + token, {name: name})
-        .then(response => {
-          if (response.data.data.id) {
-            var board = response.data.data
-            this.manageBoards()
-            console.log('trying to show Board with id', board.id)
-            this.$router.push({name: 'SingleBoard', params: {id: board.id}})
-            return
-          }
-          console.log('something went wrong!', response)
-          return
-        })
-
-        .catch(function (error) {
-          if (error.response) {
-            if (error.response.data.message) {
-              swal('Backend Error:', JSON.stringify(error.response.data.message).replace(/{|}|\[|\]/g, '\n'), 'error')
-            } else {
-              swal('Backend Error:', JSON.stringify(error.response).replace(/{|}|\[|\]/g, '\n'), 'error')
+      if (type === 'Board') {
+        axios.post('/boards?api_token=' + token, {name: name})
+          .then(response => {
+            if (response.data.data.id) {
+              var board = response.data.data
+              this.manageBoards()
+              console.log('trying to show Board with id', board.id)
+              this.$router.push({name: 'SingleBoard', params: {id: board.id}})
             }
-            console.log(error.response.data)
-            console.log(error.response.status)
-            console.log(error.response.headers)
-          } else if (error.request) {
-            console.log(error.request)
-          } else {
-            console.log('Backend Error!', error)
-          }
-          console.log(error.config)
-        })
-      return
+            console.log('something went wrong!', response)
+          })
+
+          .catch(function (error) {
+            if (error.response) {
+              if (error.response.data.message) {
+                swal('Backend Error:', JSON.stringify(error.response.data.message).replace(/{|}|\[|\]/g, '\n'), 'error')
+              } else {
+                swal('Backend Error:', JSON.stringify(error.response).replace(/{|}|\[|\]/g, '\n'), 'error')
+              }
+              console.log(error.response.data)
+              console.log(error.response.status)
+              console.log(error.response.headers)
+            } else if (error.request) {
+              console.log(error.request)
+            } else {
+              console.log('Backend Error!', error)
+            }
+            console.log(error.config)
+          })
+        return
+      }
+
+      if (type === 'Card') {
+        axios.post('/boards/' + item.id + '/list?api_token=' + token, {name: name})
+          .then(response => {
+            if (response.data.data.id) {
+              var card = response.data.data
+              this.manageBoards()
+              console.log('trying to show Board with id', card.id)
+              this.$router.push({name: 'SingleBoard', params: {id: card.id}})
+            }
+            console.log('something went wrong!', response)
+          })
+
+          .catch(function (error) {
+            if (error.response) {
+              if (error.response.data.message) {
+                swal('Backend Error:', JSON.stringify(error.response.data.message).replace(/{|}|\[|\]/g, '\n'), 'error')
+              } else {
+                swal('Backend Error:', JSON.stringify(error.response).replace(/{|}|\[|\]/g, '\n'), 'error')
+              }
+              console.log(error.response.data)
+              console.log(error.response.status)
+              console.log(error.response.headers)
+            } else if (error.request) {
+              console.log(error.request)
+            } else {
+              console.log('Backend Error!', error)
+            }
+            console.log(error.config)
+          })
+        return
+      }
+      console.log(type, name, item)
     },
 
     changeBoardName (name, id) {

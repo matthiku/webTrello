@@ -3,7 +3,6 @@
 
     <h4>Board: {{ board.name }}</h4>
 
-    <div v-if="(board.lists && !board.lists.length)">Board is empty, add new card</div>
 
     <v-container grid-list-md text-xs-center>
       <v-layout row wrap>
@@ -23,6 +22,16 @@
             </v-card-actions>
           </v-card>
         </v-flex>
+    
+        <div v-if="(board.lists && !board.lists.length)">
+          Board is empty
+          <v-menu offset-y
+            :close-on-content-click="false"
+            :nudge-width="200">
+            <v-btn class="grey" dark slot="activator">Create new Card ...</v-btn>
+            <create-new-card type="Card" :item="board"></create-new-card>
+          </v-menu>
+        </div>
 
       </v-layout>
     </v-container>
@@ -34,6 +43,7 @@
 <script>
 import cardList from './CardList'
 import boardDataMixin from '../mixins/boardDataMixin'
+import createNewCard from './CreateNewItem'
 
 export default {
 
@@ -47,7 +57,10 @@ export default {
     }
   },
 
-  components: { cardList },
+  components: {
+    cardList,
+    createNewCard
+  },
 
   mixins: [boardDataMixin],
 

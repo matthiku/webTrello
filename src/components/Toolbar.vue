@@ -20,7 +20,7 @@
               v-model="newBoardMenu"
             >
             <v-btn class="grey" dark slot="activator">Create new board ...</v-btn>
-            <create-new-board type="Board"></create-new-board>            
+            <create-new-board type="Board" item="board"></create-new-board>            
           </v-menu>
         </v-list-tile>
 

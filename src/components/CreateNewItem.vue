@@ -23,8 +23,6 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn primary flat @click="showing=false">Cancel</v-btn>
-      <v-spacer></v-spacer>
       <v-btn primary flat @click="createNewItem">Save</v-btn>
     </v-card-actions>
 
@@ -33,7 +31,7 @@
 
 <script>
   export default {
-    props: ['type'],
+    props: ['type', 'item'],
 
     data () {
       return {
@@ -45,7 +43,7 @@
     methods: {
       createNewItem () {
         if (this.newItemName) {
-          Event.$emit('newItemCreated', this.type || 'board', this.newItemName)
+          Event.$emit('newItemCreated', this.type, this.newItemName, this.item)
           this.newItemName = ''
           this.showing = false
         }

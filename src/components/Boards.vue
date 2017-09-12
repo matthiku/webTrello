@@ -24,7 +24,7 @@
                   <v-btn fab small dark class="indigo" slot="activator">
                     <v-icon dark>add</v-icon>
                   </v-btn>
-                  <create-new-board type="Board"></create-new-board>
+                  <create-new-board type="Board" item="board"></create-new-board>
                 </v-menu>
               </v-card-actions>
             </v-card-text>
@@ -71,8 +71,8 @@ export default {
       this.sendDeleteBoard(id)
     })
 
-    Event.$on('newItemCreated', (type, name) => {
-      this.sendNewItem(type, name)
+    Event.$on('newItemCreated', (type, name, item) => {
+      this.sendNewItem(type, name, item)
     })
 
     Event.$on('boardNameChanged', (name, id) => {
