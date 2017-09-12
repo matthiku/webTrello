@@ -56,13 +56,14 @@
       } else {
         this.$router.push('/login')
       }
+      console.log('App.vue created.')
     },
 
     mounted () {
-      if (this.boards !== '') {
-        // console.log('App.vue: getting all boards from backend', this.boards)
-        this.fetchBoardsData()
-      }
+      console.log('App.vue mounted, now getting all boards from backend', this.boards)
+      // if (this.boards !== '') {
+      this.fetchBoardsData()
+      // }
     }
   }
 </script>

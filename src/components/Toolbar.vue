@@ -64,6 +64,7 @@
 
 <script>
   import createNewBoard from './CreateNewItem'
+  import boardDataMixin from '../mixins/boardDataMixin'
 
   export default {
 
@@ -72,6 +73,8 @@
     components: {
       createNewBoard
     },
+
+    mixins: [boardDataMixin],
 
     data () {
       return {
@@ -95,6 +98,21 @@
 
       Event.$on('BoardsUpdated', () => {
         this.getBoards()
+      })
+
+      Event.$on('DeleteBoard', (id) => {
+        this.sendDeleteBoard(id)
+      })
+
+      Event.$on('newItemCreated', (type, name, item) => {
+        console.log('Event received: newItemCreated')
+        this.sendNewItem(type, name, item)
+      })
+
+      Event.$on('boardNameChanged', (name, id) => {
+        if (name && parseInt(id)) {
+          this.changeBoardName(name, id)
+        }
       })
     }
   }

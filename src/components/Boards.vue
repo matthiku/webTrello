@@ -66,20 +66,6 @@ export default {
 
   mounted () {
     this.fetchBoardsData()
-
-    Event.$on('DeleteBoard', (id) => {
-      this.sendDeleteBoard(id)
-    })
-
-    Event.$on('newItemCreated', (type, name, item) => {
-      this.sendNewItem(type, name, item)
-    })
-
-    Event.$on('boardNameChanged', (name, id) => {
-      if (name && parseInt(id)) {
-        this.changeBoardName(name, id)
-      }
-    })
   }
 
 }

@@ -46,17 +46,26 @@ export default {
         Event.$emit('BoardsUpdated')
         return
       }
-      this.boards = JSON.parse(localStorage.getItem('boards'))
+      // we can re-create boards from the updated lookupBoards
       this.lookupBoards = JSON.parse(localStorage.getItem('lookupBoards'))
+      this.boards = []
+      var arrayLength = this.lookupBoards.length
+      for (var j = 0; j < arrayLength; j++) {
+        if (!this.lookupBoards[j] === undefined) {
+          this.boards.push(this.lookupBoards[j])
+        }
+      }
+      localStorage.setItem('boards', JSON.stringify(this.boards))
       return
     },
 
     sendNewItem (type, name, item) {
       if (!type || !name) return
 
-      console.log('creating new', type, 'Name: ', name)
+      console.log('creating new', type, 'Name: ', name, item)
       // console.log('# of boards', this.boards.length)
 
+      var vm = this
       if (type === 'Board') {
         axios.post('/boards?api_token=' + token, {name: name})
           .then(response => {
@@ -65,8 +74,9 @@ export default {
               this.manageBoards()
               console.log('trying to show Board with id', board.id)
               this.$router.push({name: 'SingleBoard', params: {id: board.id}})
+              return
             }
-            console.log('something went wrong!', response)
+            console.log('NEW BOARD: something went wrong!', response.data.data.id, response.data.data, response.data, response)
           })
 
           .catch(function (error) {
@@ -94,11 +104,15 @@ export default {
           .then(response => {
             if (response.data.data.id) {
               var card = response.data.data
-              this.manageBoards()
+              // we need to make sure that lookupBoards is up-to-date!
+              console.log(vm.lookupBoards[item.id])
+              vm.lookupBoards[item.id].lists.push(card)
+              vm.manageBoards()
               console.log('trying to show Board with id', card.id)
-              this.$router.push({name: 'SingleBoard', params: {id: card.id}})
+              vm.$router.push({name: 'SingleBoard', params: {id: card.id}})
+              return
             }
-            console.log('something went wrong!', response)
+            console.log('NEW CARD: something went wrong!', response.data.data.id, response.data.data, response.data, response)
           })
 
           .catch(function (error) {
@@ -125,12 +139,12 @@ export default {
 
     changeBoardName (name, id) {
       if (!name || !parseInt(id)) return
-      axios.patch('/boards/' + id + '/?api_token=' + token, {name: name})
+      axios.patch('/boards/' + id + '?api_token=' + token, {name: name})
         .then(response => {
           if (response.data.data.id) {
             this.lookupBoards[id]['name'] = response.data.data.name
             Event.$emit('BoardsUpdated')
-            // TODO update this.boards!!!
+            // TODO update this.boards as well!!!
           }
         })
 
@@ -160,7 +174,7 @@ export default {
       console.log('boards:', vm.boards)
       console.log('deleting', id)
 
-      axios.delete('/boards/' + id + '/?api_token=' + token)
+      axios.delete('/boards/' + id + '?api_token=' + token)
         .then(response => {
           console.log('vm:', vm)
           if (response.data.data.id) {
