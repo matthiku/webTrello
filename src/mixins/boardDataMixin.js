@@ -3,7 +3,7 @@ export default {
     fetchBoardsData () {
       if (!token) { return this.$router.push('/login') }
 
-      // console.log('getting all boards from backend', this.boards.length)
+      console.log('getting all boards from backend', this.boards.length)
 
       axios.get('boards?api_token=' + token)
         .then(response => {
@@ -30,23 +30,22 @@ export default {
         localStorage.setItem('lookupBoards', JSON.stringify(lb))
         this.lookupBoards = lb
         this.boards = boards
-        return
-      }
-      // we can re-create boards from the updated lookupBoards
-      this.lookupBoards = JSON.parse(localStorage.getItem('lookupBoards'))
+      } else {
+        // we can re-create boards from the updated lookupBoards
+        this.lookupBoards = JSON.parse(localStorage.getItem('lookupBoards'))
 
-      var arrayLength = this.lookupBoards.length
-      console.log('refreshing boards, count:', this.boards.length)
-      this.boards = []
-      for (var j = 0; j < arrayLength; j++) {
-        // console.log('single board', j, this.lookupBoards[j])
-        if (this.lookupBoards[j] !== null) {
-          this.boards.push(this.lookupBoards[j])
+        var arrayLength = this.lookupBoards.length
+        console.log('refreshing boards, count:', this.boards.length)
+        this.boards = []
+        for (var j = 0; j < arrayLength; j++) {
+          // console.log('single board', j, this.lookupBoards[j])
+          if (this.lookupBoards[j] !== null) {
+            this.boards.push(this.lookupBoards[j])
+          }
         }
+        console.log('new boards count:', this.boards.length)
+        localStorage.setItem('boards', JSON.stringify(this.boards))
       }
-      console.log('new boards count:', this.boards.length)
-      localStorage.setItem('boards', JSON.stringify(this.boards))
-      return
     },
 
     getLocalBoards () {
@@ -85,14 +84,17 @@ export default {
               // we need to make sure that lookupBoards is up-to-date!
               // vm.manageBoards()
               console.log('existiert das Board schon?', vm.lookupBoards[item.id])
-              vm.lookupBoards[item.id].lists.push(list)
+              if (vm.lookupBoards[item.id].lists) {
+                vm.lookupBoards[item.id].lists = []
+              }
+                vm.lookupBoards[item.id].lists.push(list)
               // add new list to the board
-              console.log('addnig new list to board', item.lists)
+              console.log('adding new list to board', item.lists)
               item.lists.push(list)
               vm.manageBoards()
               return
             }
-            console.log('NEW CARD: something went wrong!', response.data.data.id, response.data.data, response.data, response)
+            console.log('NEW LIST: something went wrong!', response.data.data.id, response.data.data, response.data, response)
           })
         return
       }
