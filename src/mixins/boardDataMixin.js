@@ -37,24 +37,34 @@ export default {
 
     manageBoards (boards) {
       if (boards) {
-        this.boards = boards
-        localStorage.setItem('boards', JSON.stringify(this.boards))
-        for (var i = 0, len = this.boards.length; i < len; i++) {
-            this.lookupBoards[this.boards[i].id] = this.boards[i]
+        console.log('managing new boards', boards)
+        localStorage.setItem('boards', JSON.stringify(boards))
+        // create an index array of all board items
+        var lb = []
+        var len = boards.length
+        for (var i = 0; i < len; i++) {
+          console.log('found board id', boards[i].id)
+          lb[boards[i].id] = boards[i]
         }
-        localStorage.setItem('lookupBoards', JSON.stringify(this.lookupBoards))
-        Event.$emit('BoardsUpdated')
+        localStorage.setItem('lookupBoards', JSON.stringify(lb))
+        this.lookupBoards = lb
+        this.boards = boards
         return
       }
       // we can re-create boards from the updated lookupBoards
       this.lookupBoards = JSON.parse(localStorage.getItem('lookupBoards'))
-      this.boards = []
+
+      console.log('# of boards in lookupBoards', this.lookupBoards.length)
       var arrayLength = this.lookupBoards.length
+      console.log('refreshing boards, count:', this.boards.length)
+      this.boards = []
       for (var j = 0; j < arrayLength; j++) {
-        if (!this.lookupBoards[j] === undefined) {
+        console.log('single board', j, this.lookupBoards[j])
+        if (this.lookupBoards[j] !== null) {
           this.boards.push(this.lookupBoards[j])
         }
       }
+      console.log('new boards count:', this.boards.count)
       localStorage.setItem('boards', JSON.stringify(this.boards))
       return
     },
@@ -105,11 +115,11 @@ export default {
             if (response.data.data.id) {
               var card = response.data.data
               // we need to make sure that lookupBoards is up-to-date!
-              console.log(vm.lookupBoards[item.id])
               vm.lookupBoards[item.id].lists.push(card)
+              console.log('lookupBoards[id]', vm.lookupBoards[item.id])
               vm.manageBoards()
               console.log('trying to show Board with id', card.id)
-              vm.$router.push({name: 'SingleBoard', params: {id: card.id}})
+              vm.$router.push({name: 'SingleBoard', params: {id: item.id}})
               return
             }
             console.log('NEW CARD: something went wrong!', response.data.data.id, response.data.data, response.data, response)

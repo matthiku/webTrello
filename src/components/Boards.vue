@@ -64,7 +64,8 @@ export default {
     }
   },
 
-  mounted () {
+  created () {
+    console.log('Board.vue created, fetching data')
     this.fetchBoardsData()
   }
 

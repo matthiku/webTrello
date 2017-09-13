@@ -57,14 +57,14 @@
         this.$router.push('/login')
       }
       console.log('App.vue created.')
-    },
-
-    mounted () {
-      console.log('App.vue mounted, now getting all boards from backend', this.boards)
-      // if (this.boards !== '') {
-      this.fetchBoardsData()
-      // }
     }
+
+    /* mounted () {
+      console.log('App.vue mounted, now getting all boards from backend', this.boards)
+      if (this.boards !== '') {
+        this.fetchBoardsData()
+      }
+    } */
   }
 </script>
 

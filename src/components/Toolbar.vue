@@ -79,13 +79,15 @@
     data () {
       return {
         newBoardMenu: false,
-        boards: []
+        boards: [],
+        lookupBoards: []
       }
     },
 
     methods: {
       getBoards () {
         this.boards = JSON.parse(localStorage.getItem('boards'))
+        this.lookupBoards = JSON.parse(localStorage.getItem('lookupBoards'))
       }
     },
 
