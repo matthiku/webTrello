@@ -15,7 +15,7 @@
               <v-toolbar-side-icon></v-toolbar-side-icon>
             </v-toolbar>
 
-            <card-list :list="list"></card-list>
+            <list-list :list="list"></list-list>
 
             <v-card-actions>
               <v-btn flat class="orange--text">Add ...</v-btn>
@@ -28,8 +28,8 @@
           <v-menu offset-y
             :close-on-content-click="false"
             :nudge-width="200">
-            <v-btn class="grey" dark slot="activator">Create new Card ...</v-btn>
-            <create-new-card type="Card" :item="board"></create-new-card>
+            <v-btn class="grey" dark slot="activator">Create new List ...</v-btn>
+            <create-new-list type="List" :item="board"></create-new-list>
           </v-menu>
         </div>
 
@@ -41,9 +41,9 @@
 
 
 <script>
-import cardList from './CardList'
+import listList from './ListList'
 import boardDataMixin from '../mixins/boardDataMixin'
-import createNewCard from './CreateNewItem'
+import createNewList from './CreateNewItem'
 
 export default {
 
@@ -58,8 +58,8 @@ export default {
   },
 
   components: {
-    cardList,
-    createNewCard
+    listList,
+    createNewList
   },
 
   mixins: [boardDataMixin],
@@ -71,6 +71,7 @@ export default {
 
   watch: {
     boards: function () {
+      console.log('singleBoard.vue, BOARDS changed!')
       var boardId = this.$router.history.current.params.id
       if (this.lookupBoards[boardId]) {
         this.board = this.lookupBoards[boardId]

@@ -68,7 +68,8 @@
       deleteBoard (id) {
         this.deleting = true
         this.board.name = 'deleting board ...'
-        Event.$emit('DeleteBoard', id)
+        console.log('EMIT DeleteBoard', id)
+        Event.$emit('DeleteItem', 'Board', id)
       },
       showNameEditor () {
         this.editing = true

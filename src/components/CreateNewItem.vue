@@ -44,7 +44,7 @@
       createNewItem () {
         console.log('createNewItem', this.newItemName)
         if (this.newItemName) {
-          console.log('emit event', this.type, this.newItemName, this.item)
+          console.log('EMITTING event', this.type, this.newItemName, this.item)
           Event.$emit('newItemCreated', this.type, this.newItemName, this.item)
           this.newItemName = ''
           // this.showing = false

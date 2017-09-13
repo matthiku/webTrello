@@ -98,23 +98,23 @@
     mounted: function () {
       this.getBoards()
 
-      Event.$on('BoardsUpdated', () => {
-        this.getBoards()
+      Event.$on('DeleteItem', (type, id) => {
+        console.log('Event RECEIVED: DeleteItem', type, id)
+        this.sendDeleteItem(type, id)
       })
 
-      Event.$on('DeleteBoard', (id) => {
-        this.sendDeleteBoard(id)
+      Event.$on('ChangeItemName', (type, id, name) => {
+        console.log('Event RECEIVED: ChangeItemName', type, id, name)
+        this.sendChangeItemName(type, id, name)
       })
 
       Event.$on('newItemCreated', (type, name, item) => {
-        console.log('Event received: newItemCreated')
+        console.log('Event RECEIVED: newItemCreated', type, name, item)
         this.sendNewItem(type, name, item)
       })
 
-      Event.$on('boardNameChanged', (name, id) => {
-        if (name && parseInt(id)) {
-          this.changeBoardName(name, id)
-        }
+      Event.$on('BoardsChanged', () => {
+        this.boards = this.getLocalBoards()
       })
     }
   }
