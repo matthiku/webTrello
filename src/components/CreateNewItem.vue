@@ -50,6 +50,18 @@
           // this.showing = false
         }
       }
+    },
+
+    changed () {
+      this.showing = true
+    },
+
+    created () {
+      this.showing = true
+
+      Event.$on('closeDialog', () => {
+        this.showing = false
+      })
     }
   }
 </script>

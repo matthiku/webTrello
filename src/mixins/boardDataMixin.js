@@ -71,13 +71,13 @@ export default {
           .then(response => {
             if (response.data.data.id) {
               var board = response.data.data
-              console.log('showing boards')
-              vm.$router.push({name: 'Boards'})
               vm.boards.push(board)
-              console.log('current board', vm.board)
+              console.log('vm.boards', vm.boards)
+              console.log('vm.board', vm.board)
               vm.manageBoards(vm.boards)
-              console.log('trying to show Board with id', board.id)
-              // vm.$router.push({name: 'SingleBoard', params: {id: board.id}})
+              Event.$emit('closeDialog')
+              if (!vm.board) vm.$router.push({name: 'Boards'})
+              else vm.$router.push({name: 'SingleBoard', params: {id: board.id}})
               return
             }
             console.log('NEW BOARD: something went wrong!', response.data.data.id, response.data.data, response.data, response)

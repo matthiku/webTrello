@@ -68,6 +68,10 @@ export default {
     console.log('Boards.vue created, fetching data')
     this.fetchBoardsData()
 
+    Event.$on('closeDialog', () => {
+      this.boards = this.getLocal('boards')
+    })
+
     Event.$on('BoardsChanged', () => {
       console.log('BoardsChanged')
       this.boards = this.getLocal('boards')
