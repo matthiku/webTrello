@@ -9,6 +9,7 @@ import App from './App'
 import router from './router'
 
 /*
+
     HTTP request/response handling
 */
 window.axios = Axios
@@ -21,10 +22,14 @@ axios.interceptors.response.use(function (response) {
   }, function (error) {
     // Do something with response error
   if (error.response) {
+    if (error.response.status === 401 || error.response.data === 'Unauthorized.') {
+      router.push({name: 'Login'})
+      return
+    }
     if (error.response.data.message) {
-      swal('Backend Error:', JSON.stringify(error.response.data.message).replace(/{|}|\[|\]/g, '\n'), 'error')
+      swal('Backend Error 1:', JSON.stringify(error.response.data.message).replace(/{|}|\[|\]/g, '\n'), 'error')
     } else {
-      swal('Backend Error:', JSON.stringify(error.response).replace(/{|}|\[|\]/g, '\n'), 'error')
+      swal('Backend Error 2:', JSON.stringify(error.response).replace(/{|}|\[|\]/g, '\n'), 'error')
     }
     console.log(error.response.data)
     console.log(error.response.status)
@@ -39,6 +44,7 @@ axios.interceptors.response.use(function (response) {
   })
 
 /*
+
     Sweeet Alerts
 */
 window.swal = swal

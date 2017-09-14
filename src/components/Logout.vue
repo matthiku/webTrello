@@ -22,7 +22,6 @@ export default {
     axios.get('logout?api_token=' + token)
     .then(response => {
       this.msg = 'You are logged out!'
-      localStorage.removeItem('token')
       Event.$emit('logout')
     })
   }

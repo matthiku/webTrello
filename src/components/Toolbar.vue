@@ -36,7 +36,7 @@
 
     <v-spacer></v-spacer>
 
-    <router-link :to="{name: 'Boards', params: {}}" tag="v-toolbar-title">{{ title }}
+    <router-link :to="{name: (loggedIn ? 'Boards' : 'Login'), params: {}}" tag="v-toolbar-title">{{ title }}
     </router-link>
 
     <v-spacer></v-spacer>
@@ -86,8 +86,8 @@
 
     methods: {
       getBoards () {
-        this.boards = JSON.parse(localStorage.getItem('boards'))
-        this.lookupBoards = JSON.parse(localStorage.getItem('lookupBoards'))
+        this.boards = this.getLocal('boards')
+        this.lookupBoards = this.getLocal('lookupBoards')
       }
     },
 
@@ -114,7 +114,7 @@
       })
 
       Event.$on('BoardsChanged', () => {
-        this.boards = this.getLocalBoards()
+        this.boards = this.getLocal('boards')
       })
     }
   }

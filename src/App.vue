@@ -40,31 +40,37 @@
     mixins: [boardDataMixin],
 
     created () {
-      Event.$on('login', () => {
+      Event.$on('login', (user) => {
+        console.log('Logging in', user)
         this.loggedIn = true
-        this.user = JSON.parse(localStorage.getItem('user'))
+        window.token = user.api_token
+        localStorage.setItem('token', token)
+        localStorage.setItem('user', JSON.stringify(user))
+        this.user = this.getLocal('user')
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
       })
 
       Event.$on('logout', () => {
         this.loggedIn = false
+        token = null
+        this.cleanLocalStorage()
       })
 
-      let token = localStorage.getItem('token')
-      if (token) {
+      // if the user reloads the page, we have to restore the user data from localStorage
+      if (token || localStorage.getItem('token')) {
+        if (!token) {
+          token = localStorage.getItem('token')
+        }
         this.loggedIn = true
-        this.user = JSON.parse(localStorage.getItem('user'))
+        this.user = this.getLocal('user')
+        this.boards = this.getLocal('boards')
+        this.lookupBoards = this.getLocal('lookupBoards')
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
       } else {
         this.$router.push('/login')
       }
       console.log('App.vue created.')
     }
-
-    /* mounted () {
-      console.log('App.vue mounted, now getting all boards from backend', this.boards)
-      if (this.boards !== '') {
-        this.fetchBoardsData()
-      }
-    } */
   }
 </script>
 

@@ -49,12 +49,8 @@
         axios.post('login', this.login)
 
         .then(response => {
-          token = response.data.user.api_token
-          window.token = token
-          localStorage.setItem('token', token)
-          localStorage.setItem('user', JSON.stringify(response.data.user))
-          Event.$emit('login')
-          this.$router.push('/')
+          Event.$emit('login', response.data.user)
+          if (token) this.$router.push({name: 'Boards'})
         })
 
         .catch(function (error) {

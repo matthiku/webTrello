@@ -55,9 +55,7 @@
       registerIt () {
         axios.post('register', this.register)
         .then(response => {
-          let token = response.data.user.api_token
-          localStorage.setItem('token', token)
-          localStorage.setItem('user', response.data.user)
+          this.$emit('login', response.data.user)
         })
         .catch(function (error) {
           if (error.response) {

@@ -65,11 +65,12 @@ export default {
   },
 
   created () {
-    console.log('Board.vue created, fetching data')
+    console.log('Boards.vue created, fetching data')
     this.fetchBoardsData()
 
     Event.$on('BoardsChanged', () => {
-      this.boards = this.getLocalBoards()
+      console.log('BoardsChanged')
+      this.boards = this.getLocal('boards')
     })
   }
 

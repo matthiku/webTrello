@@ -1,11 +1,11 @@
 export default {
   methods: {
     fetchBoardsData () {
-      if (!token) { return this.$router.push('/login') }
+      if (!token) { return this.$router.push({name: 'Login'}) }
 
       console.log('getting all boards from backend', this.boards.length)
 
-      axios.get('boards?api_token=' + token)
+      axios.get('boards')
         .then(response => {
           if (response.data) {
             this.manageBoards(response.data.data)
@@ -32,7 +32,7 @@ export default {
         this.boards = boards
       } else {
         // we can re-create boards from the updated lookupBoards
-        this.lookupBoards = JSON.parse(localStorage.getItem('lookupBoards'))
+        this.lookupBoards = this.getLocal('lookupBoards')
 
         var arrayLength = this.lookupBoards.length
         console.log('refreshing boards, count:', this.boards.length)
@@ -48,8 +48,15 @@ export default {
       }
     },
 
-    getLocalBoards () {
-      return JSON.parse(localStorage.getItem('boards'))
+    getLocal (item) {
+      return JSON.parse(localStorage.getItem(item))
+    },
+
+    cleanLocalStorage () {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      localStorage.removeItem('boards')
+      localStorage.removeItem('lookupBoards')
     },
 
     sendNewItem (type, name, item) {
@@ -60,14 +67,17 @@ export default {
 
       var vm = this
       if (type === 'Board') {
-        axios.post('/boards?api_token=' + token, {name: name})
+        axios.post('/boards', {name: name})
           .then(response => {
             if (response.data.data.id) {
               var board = response.data.data
+              console.log('showing boards')
+              vm.$router.push({name: 'Boards'})
               vm.boards.push(board)
+              console.log('current board', vm.board)
               vm.manageBoards(vm.boards)
               console.log('trying to show Board with id', board.id)
-              vm.$router.push({name: 'SingleBoard', params: {id: board.id}})
+              // vm.$router.push({name: 'SingleBoard', params: {id: board.id}})
               return
             }
             console.log('NEW BOARD: something went wrong!', response.data.data.id, response.data.data, response.data, response)
@@ -76,7 +86,7 @@ export default {
       }
 
       if (type === 'List') {
-        axios.post('/boards/' + item.id + '/list?api_token=' + token, {name: name})
+        axios.post('/boards/' + item.id + '/list', {name: name})
           .then(response => {
             if (response.data.data.id) {
               var list = response.data.data
@@ -84,10 +94,10 @@ export default {
               // we need to make sure that lookupBoards is up-to-date!
               // vm.manageBoards()
               console.log('existiert das Board schon?', vm.lookupBoards[item.id])
-              if (vm.lookupBoards[item.id].lists) {
+              if (!vm.lookupBoards[item.id].lists) {
                 vm.lookupBoards[item.id].lists = []
               }
-                vm.lookupBoards[item.id].lists.push(list)
+              vm.lookupBoards[item.id].lists.push(list)
               // add new list to the board
               console.log('adding new list to board', item.lists)
               item.lists.push(list)
@@ -103,7 +113,7 @@ export default {
 
     sendChangeItemName (type, id, name) {
       if (!type || !name || !parseInt(id)) return
-      axios.patch('/boards/' + id + '?api_token=' + token, {name: name})
+      axios.patch('/boards/' + id, {name: name})
         .then(response => {
           if (response.data.data.id) {
             this.lookupBoards[id]['name'] = response.data.data.name
@@ -120,7 +130,7 @@ export default {
       console.log('deleting', type, 'id#', id)
 
       // the DELETE function returns again a full BOARDS list
-      axios.delete('/boards/' + id + '?api_token=' + token)
+      axios.delete('/boards/' + id)
         .then(response => {
           if (response.data.data) {
             vm.boards = response.data.data
